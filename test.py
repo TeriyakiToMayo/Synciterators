@@ -49,10 +49,6 @@ class EIterator:
         self.it.prepend(zs)
         return r
 
-
 mytuple = ("apple", "banana", "cherry")
 myit = iter(mytuple)
-
 myEIt = EIterator(myit)
-
-

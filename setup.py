@@ -11,6 +11,6 @@ from setuptools import setup
 from Cython.Build import cythonize
 
 setup(
-    # ext_modules = cythonize("LinkedList.pyx")
-    ext_modules = cythonize("CacheIterator.pyx")
+    #ext_modules = cythonize("LinkedList.pyx")
+    ext_modules = cythonize("SynchroCacheIterator.pyx")
 )

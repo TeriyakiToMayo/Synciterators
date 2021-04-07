@@ -44,7 +44,7 @@ class SynchroCacheIterator:
         return x
 
     def syncedWith(self, x, bf, cs):
-        res = LinkedList()
+        res = []
         # traverse through nodes in cache and add to res the elements where
         # cs is true. Potentially pop out nodes where bf(y, x) and !cs(y, x)
 
@@ -64,10 +64,10 @@ class SynchroCacheIterator:
                 prev.next = curr
             elif not bf(y, x) and not cs(y, x):
                 # Stopping condition reached.
-                return res.__list__()
+                return res
             else:
                 # Here, cs(y,x) is true.
-                res.add(y)
+                res.append(y)
                 prev = curr
                 curr = curr.next
         # At this point, everything from cache where cs(y,x) is true
@@ -78,7 +78,7 @@ class SynchroCacheIterator:
                 y = next(self._it)
             except StopIteration:
                 # self._it is empty. Nothing left to do.
-                return res.__list__()
+                return res
 
             if bf(y,x) and not cs(y, x):
                 # throw y away.
@@ -88,6 +88,6 @@ class SynchroCacheIterator:
             self.cache(y)
             if not bf(y, x) and not cs(y, x):
                 # Stopping condition reached.
-                return res.__list__()
+                return res
             # as per usual, here cs(y,x) is true.
-            res.add(y)
+            res.append(y)

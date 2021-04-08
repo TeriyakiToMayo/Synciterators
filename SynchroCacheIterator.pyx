@@ -89,9 +89,10 @@ class SynchroCacheIterator:
                 return res
             else:
                 # Here, cs(y,x) is true.
+                res.append(y)
                 prev = curr
                 curr = curr.next
-
+                
         # At this point, everything from cache where cs(y,x) is true
         # has been added to res. But there is more to add from self._it. 
         # Iterate through self._it via the same methodology as above. 

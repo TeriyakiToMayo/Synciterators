@@ -1,7 +1,105 @@
+from new_synciterators_cython import EIterator as BetterBetter
 from new_synciterators import EIterator as Better
 from original_synciterators import EIterator as Worse
 from random import randint
 from time import time
+
+
+
+#===============================================
+# Utilities
+#===============================================
+def timed(f):
+    def g(*args, **kwargs):
+        t = time()
+        f(*args, **kwargs)
+        print(f'Execution took {time() - t}s')
+    return g
+
+
+
+#===============================================
+# Intersections
+#===============================================
+
+def fixedGapList(low, high, gap=5):
+    return list(range(low, high, gap))
+
+def randomGapList(low, high):
+    generated_list = []
+    last = low
+    while(True):
+        increment = randint(1, 10)
+        if last + increment > high: break
+        last += increment
+        generated_list.append(last)
+    return generated_list
+
+@timed
+def intersection(cls, xs, ys, rounds=1):
+    
+    _Yprime = cls(ys)
+    bf = (lambda y, x : y < x)
+    cs = (lambda y, x: y == x)
+    
+    for i in range(rounds):
+        [_Yprime.syncedWith(x, bf, cs) for x in xs]
+        
+    
+
+print("Testing Intersection 10^6*15 Fixed Gap")
+xs = fixedGapList(0, 1000000)
+ys = fixedGapList(0, 1000000, 1)
+rounds = 15
+print('Testing new with Cython implementation...')
+intersection(BetterBetter, xs, ys, rounds)
+print('Testing new implementation...')
+intersection(Better, xs, ys, rounds)
+print('Testing old implementation...')
+intersection(Worse, xs, ys, rounds)
+
+
+print("Testing Intersection 10^6*30 Fixed Gap")
+xs = fixedGapList(0, 1000000)
+ys = fixedGapList(0, 1000000, 1)
+rounds = 30
+print('Testing new with Cython implementation...')
+intersection(BetterBetter, xs, ys, rounds)
+print('Testing new implementation...')
+intersection(Better, xs, ys, rounds)
+print('Testing old implementation...')
+intersection(Worse, xs, ys, rounds)
+
+
+print("Testing Intersection 10^6*15 Random Gap")
+xs = randomGapList(0, 1000000)
+ys = randomGapList(0, 1000000)
+rounds = 15
+print('Testing new with Cython implementation...')
+intersection(BetterBetter, xs, ys, rounds)
+print('Testing new implementation...')
+intersection(Better, xs, ys, rounds)
+print('Testing old implementation...')
+intersection(Worse, xs, ys, rounds)
+
+
+print("Testing Intersection 10^6*30 Random Gap")
+xs = randomGapList(0, 1000000)
+ys = randomGapList(0, 1000000)
+rounds = 30
+print('Testing new with Cython implementation...')
+intersection(BetterBetter, xs, ys, rounds)
+print('Testing new implementation...')
+intersection(Better, xs, ys, rounds)
+print('Testing old implementation...')
+intersection(Worse, xs, ys, rounds)
+
+
+
+
+#===============================================
+# Interval Merge
+#===============================================
 class Interval:
     @classmethod
     def generate_intervals(cls, low, high, n, max_width):
@@ -36,12 +134,6 @@ class Interval:
     def __repr__(self):
         return f'[{self.start}, {self.end}]'
 
-def timed(f):
-    def g(*args, **kwargs):
-        t = time()
-        f(*args, **kwargs)
-        print(f'Execution took {time() - t}s')
-    return g
 
 @timed
 def merged(cls, xs, ys):
@@ -57,10 +149,12 @@ cs = lambda x, y: x.overlaps(y)
 print('Testing 1000 intervals')
 xs = Interval.generate_intervals(0, 5000, 1000, 1000)
 ys = Interval.generate_intervals(0, 5000, 1000, 1000)
+# Merging using new with cython
+print('Testing new with Cython implementation...')
+new = merged(BetterBetter, xs, ys)
 # Merging using new
 print('Testing new implementation...')
-new = merged(Better, xs, ys)
-
+old = merged(Better, xs, ys)
 # Merging using old
 print('Testing old implementation...')
 old = merged(Worse, xs, ys)
@@ -74,16 +168,21 @@ else:
 print('Testing 5000 intervals')
 xs = Interval.generate_intervals(0, 5000, 5000, 1000)
 ys = Interval.generate_intervals(0, 5000, 5000, 1000)
-
-# Merging using old
-print('Testing old implementation...')
-old = merged(Worse, xs, ys)
+# Merging using new with cython
+print('Testing new with Cython implementation...')
+new = merged(BetterBetter, xs, ys)
 # Merging using new
 print('Testing new implementation...')
-new = merged(Better, xs, ys)
+old = merged(Better, xs, ys)
+# Merging using old
+print('Testing old implementation...')
+# old = merged(Worse, xs, ys)
 
 if new == old:
     print('Output is correct.')
 else:
     print('Output is incorrect!.')
+
+
+
 
